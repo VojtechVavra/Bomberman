@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_semestralni_projekt" default="compile.module.semestralni_projekt">
+  <dirname property="module.semestralni_projekt.basedir" file="${ant.file.module_semestralni_projekt}"/>
+  
+  <property name="module.jdk.home.semestralni_projekt" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.semestralni_projekt" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.semestralni_projekt" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.semestralni_projekt" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="semestralni_projekt.output.dir" value="${module.semestralni_projekt.basedir}/out/production/semestralni_projekt"/>
+  <property name="semestralni_projekt.testoutput.dir" value="${module.semestralni_projekt.basedir}/out/test/semestralni_projekt"/>
+  
+  <path id="semestralni_projekt.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="semestralni_projekt.module.production.classpath">
+    <path refid="${module.jdk.classpath.semestralni_projekt}"/>
+  </path>
+  
+  <path id="semestralni_projekt.runtime.production.module.classpath">
+    <pathelement location="${semestralni_projekt.output.dir}"/>
+  </path>
+  
+  <path id="semestralni_projekt.module.classpath">
+    <path refid="${module.jdk.classpath.semestralni_projekt}"/>
+    <pathelement location="${semestralni_projekt.output.dir}"/>
+  </path>
+  
+  <path id="semestralni_projekt.runtime.module.classpath">
+    <pathelement location="${semestralni_projekt.testoutput.dir}"/>
+    <pathelement location="${semestralni_projekt.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.semestralni_projekt">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.semestralni_projekt">
+    <patternset refid="excluded.from.module.semestralni_projekt"/>
+  </patternset>
+  
+  <path id="semestralni_projekt.module.sourcepath">
+    <dirset dir="${module.semestralni_projekt.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.semestralni_projekt" depends="compile.module.semestralni_projekt.production,compile.module.semestralni_projekt.tests" description="Compile module semestralni_projekt"/>
+  
+  <target name="compile.module.semestralni_projekt.production" depends="register.custom.compilers" description="Compile module semestralni_projekt; production classes">
+    <mkdir dir="${semestralni_projekt.output.dir}"/>
+    <javac2 destdir="${semestralni_projekt.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.semestralni_projekt}/javac">
+      <compilerarg line="${compiler.args.semestralni_projekt}"/>
+      <bootclasspath refid="semestralni_projekt.module.bootclasspath"/>
+      <classpath refid="semestralni_projekt.module.production.classpath"/>
+      <src refid="semestralni_projekt.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.semestralni_projekt"/>
+    </javac2>
+    
+    <copy todir="${semestralni_projekt.output.dir}">
+      <fileset dir="${module.semestralni_projekt.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.semestralni_projekt.tests" depends="register.custom.compilers,compile.module.semestralni_projekt.production" description="compile module semestralni_projekt; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.semestralni_projekt" description="cleanup module">
+    <delete dir="${semestralni_projekt.output.dir}"/>
+    <delete dir="${semestralni_projekt.testoutput.dir}"/>
+  </target>
+</project>

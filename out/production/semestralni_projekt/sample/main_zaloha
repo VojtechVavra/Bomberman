@@ -1,0 +1,341 @@
+package sample;
+
+import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+
+import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
+
+public class Main extends Application {
+
+    // moje pridane
+    //private List<Paintable> subjects = new LinkedList<>();
+
+    //@Override
+    public void start2(Stage primaryStage) throws Exception{
+
+        /*main_scene = new Scene(createContent());
+        primaryStage.setTitle("Bomberman");
+        primaryStage.setMaxHeight(Constants.screenHeight);
+        primaryStage.setMaxWidth(Constants.screenWidth);
+        primaryStage.setScene(main_scene);
+        primaryStage.show();
+        */
+
+        // https://docs.oracle.com/javafx/2/canvas/jfxpub-canvas.htm
+        // snake
+        // https://github.com/Gaspared/snake/blob/master/Main.java
+
+        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        //Bomberman player1 = BomberMan();
+        primaryStage.setTitle("Bomberman");
+        primaryStage.setScene(new Scene(root, 600, 400));
+
+        //Group root = new Group()
+        Canvas canvas = new Canvas(300, 250);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        //drawShapes(gc);
+        Group root2 = new Group();
+        root2.getChildren().add(canvas);
+        gc.drawImage(Constants.UFO,50 ,50 , 45, 45);
+        gc.fillRoundRect(110, 60, 30, 30, 10, 10);
+
+        primaryStage.show();
+
+        // moje pridane
+        final int X = 600;
+        final int Y = 400;
+       // CanvasManager instance;
+        //CanvasManager.constructInstance(canvas);
+        //GraphicsContext gc = fxCanvas.getGraphicsContext2D();
+        //PaintBorder(50, 50, gc);
+    }
+
+    // moje pridane
+    public void PaintBorder(int X, int Y, GraphicsContext gc)
+    {
+        gc.drawImage(Constants.UFO, X , Y , 45, 45);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // https://docs.oracle.com/javafx/2/canvas/jfxpub-canvas.htm
+        // snake
+        // https://github.com/Gaspared/snake/blob/master/Main.java
+
+        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+
+        /*
+        primaryStage.setTitle("Drawing Operations Test");
+        Group root = new Group();
+        Canvas canvas = new Canvas(300, 250);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        //drawShapes(gc);
+        root.getChildren().add(canvas);
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+        System.out.println("Enter Pressed");
+        */
+
+        Group root = new Group();
+        BorderPane pane = new BorderPane();
+        primaryStage.setTitle("Bomberman");
+
+        /*
+        Button button = new Button("Press Me!");
+        pane.setCenter(button);
+        */
+
+        Scene scene = new Scene(pane, Constants.WIDTH, Constants.HEIGHT);
+        //primaryStage.setResizable(false);
+
+        Group mainMenu = new Group();
+        Scene scene2 = new Scene(mainMenu, Constants.WIDTH, Constants.HEIGHT);
+
+        final Text text1 = new Text(Constants.WIDTH / 2 - 50, 100, "Bomberman");
+        text1.setFill(Color.CHOCOLATE);
+        text1.setFont(Font.font(java.awt.Font.SERIF, 25));
+        mainMenu.getChildren().add(text1);      //   pane.getChildren().add(text1);
+
+        Rectangle rectangle = new Rectangle();
+        rectangle.setSize(Constants.WIDTH, Constants.HEIGHT);
+        //mainMenu.getChildren().add(rectangle);
+
+        pane.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //bombCanvas.setLayoutX(this.posX);
+        //bombCanvas.setLayoutY(this.posY);
+
+        // create player
+        Player player1 = new Player(pane);
+        pane.getChildren().add(player1.getCanvas());
+
+        /*button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Constants.isPlay = true;
+                text1.setText("Starting game!");
+                System.out.println("Starting game!");
+                button.setVisible(false);
+                player1.setVisible(true);
+                //label.setText("Accepted");
+            }
+        });
+        */
+
+        // create structs
+        GameMap map = new GameMap();
+        pane.getChildren().add(map.getCanvas());
+
+        primaryStage.setScene(scene);
+
+        final long startNanoTime = System.nanoTime();
+
+        new AnimationTimer()
+        {
+            public void handle(long currentNanoTime)
+            {
+                double t = (currentNanoTime - startNanoTime) / 100000000000.0;
+
+                //double x = 232 + 128 * Math.cos(t);
+                //double y = 232 + 128 * Math.sin(t);
+                // background image clears canvas
+                player1.movePlayer();
+            }
+        }.start();
+
+        primaryStage.show();
+
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(!Constants.isPlay)
+                {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        Constants.isPlay = true;
+                        text1.setText("Starting game!");
+                        System.out.println("Starting game!");
+                        System.out.println(49/50);
+                        System.out.println(51/50);
+
+                        // start game
+                        //button.setVisible(false);
+                        player1.setVisible(true);
+
+                        // set the scene
+                        primaryStage.setScene(scene2);
+
+                        primaryStage.show();
+                    }
+                    else if (event.getCode() == KeyCode.ESCAPE) {
+                        Constants.isPlay = false;
+                        text1.setText("Exiting game");
+                        System.out.println("Exiting game");
+                    }
+                }
+                else if(Constants.isPlay)
+                {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        Constants.isPlay = false;
+                        text1.setText("Entering Main menu");
+                        System.out.println("Entering Main menu");
+
+                        //button.setVisible(true);
+                        player1.setVisible(false);
+                    }
+                    if (event.getCode() == KeyCode.SPACE) {
+                        System.out.println("Bomb dropped");
+                        player1.DropBomb();
+                    }
+
+                    if (event.getCode() == KeyCode.LEFT) {
+                        player1.isMovingLeft = false;
+                    }
+                    else if (event.getCode() == KeyCode.RIGHT) {
+                        player1.isMovingRight = false;
+                    }
+                    else if (event.getCode() == KeyCode.UP) {
+                        player1.isMovingUp = false;
+                    }
+                    else if (event.getCode() == KeyCode.DOWN) {
+                        player1.isMovingDown = false;
+                    }
+                }
+            }
+        });
+
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(Constants.isPlay)
+                {
+                    if (event.getCode() == KeyCode.LEFT) {
+                        System.out.println("Move left");
+                        player1.isMovingUp = false;
+                        player1.isMovingDown = false;
+                        player1.isMovingLeft = true;
+                        player1.isMovingRight = false;
+                        player1.lastDirection = Player.PlayerDirection.LEFT;
+                        //player1.moveLeft();
+                    }
+                    else if (event.getCode() == KeyCode.RIGHT) {
+                        System.out.println("Move right");
+                        //player1.moveRight();
+                        player1.isMovingUp = false;
+                        player1.isMovingDown = false;
+                        player1.isMovingLeft = false;
+                        player1.isMovingRight = true;
+                        player1.lastDirection = Player.PlayerDirection.RIGHT;
+                    }
+                    else if (event.getCode() == KeyCode.UP) {
+                        System.out.println("Move up");
+                        //player1.moveUp();
+                        player1.isMovingUp = true;
+                        player1.isMovingDown = false;
+                        player1.isMovingLeft = false;
+                        player1.isMovingRight = false;
+                        player1.lastDirection = Player.PlayerDirection.UP;
+                    }
+                    else if (event.getCode() == KeyCode.DOWN) {
+                        System.out.println("Move down");
+                        //player1.moveDown();
+                        player1.isMovingUp = false;
+                        player1.isMovingDown = true;
+                        player1.isMovingLeft = false;
+                        player1.isMovingRight = false;
+                        player1.lastDirection = Player.PlayerDirection.DOWN;
+                    }
+                }
+
+            }
+        });
+
+        /*root.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ESCAPE) {
+                    System.out.println("Key Pressed: " + ke.getCode());
+                    System.console().printf("neco");
+                    Canvas canvas = new Canvas(300, 250);
+                    GraphicsContext gc = canvas.getGraphicsContext2D();
+                    drawShapes(gc);
+                    primaryStage.close();
+                }
+            }
+        });
+        */
+
+        /*
+        // control
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, key -> {
+            if (key.getCode() == KeyCode.W) {
+                direction = Dir.up;
+            }
+            if (key.getCode() == KeyCode.A) {
+                direction = Dir.left;
+            }
+            if (key.getCode() == KeyCode.S) {
+                direction = Dir.down;
+            }
+            if (key.getCode() == KeyCode.D) {
+                direction = Dir.right;
+            }
+
+        });
+        */
+
+    }
+
+    private void StartGame()
+    {
+
+    }
+
+    private void drawShapes(GraphicsContext gc) {
+        gc.drawImage(Constants.UFO, 50,10, 45, 45);
+        gc.setFill(Color.GREEN);
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(5);
+        gc.strokeLine(20, 10, 20, 40);
+        gc.setStroke(Color.RED);
+        gc.strokeLine(20, 50, 20, 80);
+        //gc.fillOval(10, 60, 30, 30);
+        //gc.strokeOval(60, 60, 30, 30);
+        gc.fillRoundRect(110, 60, 30, 30, 10, 10);
+        gc.strokeRoundRect(160, 60, 30, 30, 10, 10);
+
+    }
+
+    private void drawPlayer(GraphicsContext gc)
+    {
+        gc.drawImage(Constants.UFO, 50,10, 45, 45);
+    }
+
+
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
