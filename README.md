@@ -1,2 +1,4 @@
 # Bomberman
-My Bomberman for school project in JavaFx
+My Bomberman game for school project in JavaFx\
+\
+Bomberman with just a few stuff + save/load
